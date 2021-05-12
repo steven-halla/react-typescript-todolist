@@ -1,53 +1,28 @@
-import React, {FC, useState, ChangeEvent} from 'react';
-import './App.css';
-import {ITask} from './Interfaces'
-import TodoTask from "./Components/TodoTask";
+import React, {FC} from 'react';
+import './App.scss';
+import {Header} from "./components/Header";
+import {TodoContextProvider} from "./components/TodoContext";
+import {TodoList} from "./components/TodoList";
+import styled from "styled-components";
 
+const StyledApp = styled.div`
+    &.app {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      width: 100vw;
+      height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+`;
 
-const App: FC = () => {
-    const [task, setTask] = useState<string>("");
-    const [deadline, setDeadline] = useState<number>(0);
-    const [todoList, setTodoList] = useState<ITask[]>([]);
-
-    const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
-        if (event.target.name === "task") {
-            setTask(event.target.value)
-        } else{
-            setDeadline(Number(event.target.value));
-        }
-    };
-
-    const addTask = (): void => {
-        const newTask = {taskName: task, deadline: deadline}
-        setTodoList([...todoList, newTask]);
-        // console.log(todoList);
-        setTask("");
-        setDeadline(0);
-    };
-
-    const completeTask = (taskNameToDelete: string): void => {
-      setTodoList(todoList.filter((task) => {
-        return task.taskName != taskNameToDelete
-        }))
-    };
-
+export const App: FC = () => {
     return (
-    <div className="App">
-      <div className="header">
-          <div className="inputContainer">
-              <input type="text" placeholder="Task..." onChange={handleChange} name="task" value={task}/>
-              <input type="number" placeholder="Deadline (in Days)..." onChange={handleChange} name="deadline" value={deadline}/>
-          </div>
-          <button onClick={addTask}>Add Task</button>
-      </div>
-        <div className="todoList">
-            {todoList.map((task: ITask, key: number) => {
-                return <TodoTask key={key} task={task} completeTask={completeTask}/>;
-            })}
-        </div>
-    </div>
-
-  );
+        <TodoContextProvider>
+            <StyledApp className="app">
+                <Header/>
+                <TodoList/>
+            </StyledApp>
+        </TodoContextProvider>
+    );
 }
-
-export default App;
